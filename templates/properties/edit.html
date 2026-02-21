@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Add Property — ZHub{% endblock %}
+{% block title %}Edit {{ property.address }} — ZHub{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
-  <h1 class="text-2xl font-bold text-gray-900">Add Property</h1>
+  <h1 class="text-2xl font-bold text-gray-900">Edit Property</h1>
 
   <form method="post" class="rounded-xl border bg-white shadow-sm">
     {% csrf_token %}
@@ -92,9 +92,9 @@
 
     {# ── Actions ── #}
     <div class="flex items-center justify-end gap-3 px-6 py-4">
-      <a href="{% url 'properties:list' %}" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">Cancel</a>
+      <a href="{% url 'properties:detail' pk=property.pk %}" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">Cancel</a>
       <button type="submit" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">
-        Save Property
+        Save Changes
       </button>
     </div>
   </form>

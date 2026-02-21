@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}{{ property.address }} — ZHub{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  {# ── Header ── #}
+  <div class="flex items-start justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">{{ property.address }}</h1>
+      <p class="text-sm text-gray-500">{{ property.city }}, {{ property.state }} {{ property.zip }}</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="{% url 'properties:edit' pk=property.pk %}"
+         class="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+        </svg>
+        Edit
+      </a>
+      <a href="{% url 'properties:delete' pk=property.pk %}"
+         class="inline-flex items-center gap-1 rounded-lg border border-red-300 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+        </svg>
+        Delete
+      </a>
+    </div>
+  </div>
+
+  {# ── Summary Cards ── #}
+  <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+    <div class="rounded-xl border bg-white p-4 shadow-sm">
+      <p class="text-xs text-gray-500">Type</p>
+      <p class="mt-1 text-sm font-semibold text-gray-900">{{ property.get_property_type_display }}</p>
+    </div>
+    <div class="rounded-xl border bg-white p-4 shadow-sm">
+      <p class="text-xs text-gray-500">Occupancy</p>
+      <p class="mt-1 text-sm font-semibold text-gray-900">{{ property.occupancy_display }}</p>
+    </div>
+    <div class="rounded-xl border bg-white p-4 shadow-sm">
+      <p class="text-xs text-gray-500">Monthly Rent</p>
+      <p class="mt-1 text-sm font-semibold text-emerald-700">${{ property.total_monthly_rent|floatformat:2 }}</p>
+    </div>
+    <div class="rounded-xl border bg-white p-4 shadow-sm">
+      <p class="text-xs text-gray-500">Monthly Mortgage</p>
+      <p class="mt-1 text-sm font-semibold text-gray-900">${{ property.monthly_mortgage|floatformat:2 }}</p>
+    </div>
+  </div>
+
+  {# ── Property Info ── #}
+  <div class="rounded-xl border bg-white p-6 shadow-sm">
+    <h2 class="text-base font-semibold text-gray-900 mb-4">Property Details</h2>
+    <dl class="grid grid-cols-2 gap-4 sm:grid-cols-4 text-sm">
+      <div>
+        <dt class="text-gray-500">Bedrooms</dt>
+        <dd class="font-medium text-gray-900">{{ property.bedrooms }}</dd>
+      </div>
+      <div>
+        <dt class="text-gray-500">Bathrooms</dt>
+        <dd class="font-medium text-gray-900">{{ property.bathrooms }}</dd>
+      </div>
+      <div>
+        <dt class="text-gray-500">Sq Ft</dt>
+        <dd class="font-medium text-gray-900">{{ property.sq_ft|default:"—" }}</dd>
+      </div>
+      <div>
+        <dt class="text-gray-500">Purchase Date</dt>
+        <dd class="font-medium text-gray-900">{{ property.purchase_date|date:"M j, Y"|default:"—" }}</dd>
+      </div>
+      <div>
+        <dt class="text-gray-500">Purchase Price</dt>
+        <dd class="font-medium text-gray-900">${{ property.purchase_price|floatformat:0 }}</dd>
+      </div>
+      <div>
+        <dt class="text-gray-500">Current Value</dt>
+        <dd class="font-medium text-gray-900">${{ property.current_value|floatformat:0 }}</dd>
+      </div>
+    </dl>
+    {% if property.notes %}
+    <div class="mt-4 border-t pt-4">
+      <dt class="text-sm text-gray-500">Notes</dt>
+      <dd class="mt-1 text-sm text-gray-900">{{ property.notes }}</dd>
+    </div>
+    {% endif %}
+  </div>
+
+  {# ── Units ── #}
+  <div class="rounded-xl border bg-white shadow-sm">
+    <div class="flex items-center justify-between border-b px-6 py-4">
+      <h2 class="text-base font-semibold text-gray-900">Units</h2>
+      <a href="{% url 'properties:unit_add' property_pk=property.pk %}"
+         class="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+        </svg>
+        Add Unit
+      </a>
+    </div>
+
+    {% if units %}
+    <div class="divide-y">
+      {% for unit in units %}
+      <div class="px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900">{{ unit.label }}</h3>
+            <p class="text-xs text-gray-500">
+              {{ unit.bedrooms }} bd / {{ unit.bathrooms }} ba
+              {% if unit.sq_ft %} / {{ unit.sq_ft }} sqft{% endif %}
+              — ${{ unit.rent_amount|floatformat:0 }}/mo
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            {% if unit.is_occupied %}
+              <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">Occupied</span>
+            {% else %}
+              <span class="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">Vacant</span>
+            {% endif %}
+            <a href="{% url 'properties:unit_edit' property_pk=property.pk unit_pk=unit.pk %}"
+               class="text-gray-400 hover:text-gray-600" title="Edit unit">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
+              </svg>
+            </a>
+            <a href="{% url 'properties:unit_delete' property_pk=property.pk unit_pk=unit.pk %}"
+               class="text-gray-400 hover:text-red-600" title="Delete unit">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        {# Leases for this unit #}
+        {% for lease in unit.leases.all %}
+        <div class="mt-3 ml-4 rounded-lg bg-gray-50 p-3 flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-900">{{ lease.tenant_name }}</p>
+            <p class="text-xs text-gray-500">
+              {{ lease.start_date|date:"M j, Y" }} — {{ lease.end_date|date:"M j, Y" }}
+              &middot; ${{ lease.rent_amount|floatformat:0 }}/mo
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            {% if lease.status == "active" %}
+              <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">Active</span>
+            {% elif lease.status == "upcoming" %}
+              <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">Upcoming</span>
+            {% else %}
+              <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Expired</span>
+            {% endif %}
+            <a href="{% url 'properties:lease_edit' property_pk=property.pk unit_pk=unit.pk lease_pk=lease.pk %}"
+               class="text-gray-400 hover:text-gray-600" title="Edit lease">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        {% empty %}
+        <div class="mt-3 ml-4">
+          <a href="{% url 'properties:lease_add' property_pk=property.pk unit_pk=unit.pk %}"
+             class="inline-flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+            </svg>
+            Add lease
+          </a>
+        </div>
+        {% endfor %}
+
+        {% if unit.leases.all %}
+        <div class="mt-2 ml-4">
+          <a href="{% url 'properties:lease_add' property_pk=property.pk unit_pk=unit.pk %}"
+             class="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700">
+            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+            </svg>
+            Add lease
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="px-6 py-12 text-center text-gray-400">
+      <svg class="mx-auto h-10 w-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5M3.75 3v18m16.5-18v18M5.25 3h13.5M5.25 21h13.5M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15"/>
+      </svg>
+      <p class="text-sm">No units yet. Add a unit to start tracking tenants and leases.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
