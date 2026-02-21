@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Studios — ZHub{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <h1 class="text-2xl font-bold text-gray-900">Studios</h1>
+
+  {% if studios %}
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    {% for studio in studios %}
+    <a href="{% url 'studios:detail' slug=studio.slug %}"
+       class="rounded-xl border bg-white p-6 shadow-sm hover:shadow-md transition">
+      <h3 class="text-lg font-semibold text-gray-900">{{ studio.name }}</h3>
+      <p class="mt-1 text-sm text-gray-500">{{ studio.address }}, {{ studio.city }} {{ studio.state }} {{ studio.zip }}</p>
+      {% if studio.phone %}
+      <p class="mt-1 text-sm text-gray-500">{{ studio.phone }}</p>
+      {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+    </svg>
+    <h3 class="mt-2 text-sm font-semibold text-gray-900">Studio Analytics</h3>
+    <p class="mt-1 text-sm text-gray-500">Coming in Phase 2 — Mariana Tek integration, class analytics, and revenue tracking.</p>
+  </div>
+</div>
+{% endblock %}

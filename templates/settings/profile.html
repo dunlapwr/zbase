@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Settings — ZHub{% endblock %}
+
+{% block content %}
+<div class="space-y-8 max-w-2xl">
+  <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
+
+  {# ── Profile ── #}
+  <div class="rounded-xl border bg-white p-6 shadow-sm">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Profile</h2>
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="id_first_name" class="block text-sm font-medium text-gray-700 mb-1">First name</label>
+          {{ form.first_name }}
+        </div>
+        <div>
+          <label for="id_last_name" class="block text-sm font-medium text-gray-700 mb-1">Last name</label>
+          {{ form.last_name }}
+        </div>
+      </div>
+      <div>
+        <label for="id_email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        {{ form.email }}
+      </div>
+      <div>
+        <label for="id_phone" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+        {{ form.phone }}
+      </div>
+      <div class="pt-2">
+        <button type="submit"
+                class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">
+          Save changes
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {# ── Household ── #}
+  <div class="rounded-xl border bg-white p-6 shadow-sm">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Household</h2>
+    {% if user.household %}
+      <p class="text-sm text-gray-600 mb-3">
+        <span class="font-medium text-gray-900">{{ user.household.name }}</span>
+      </p>
+      {% if household_members %}
+      <ul class="divide-y">
+        {% for member in household_members %}
+        <li class="flex items-center gap-3 py-3">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-semibold text-sm">
+            {{ member.first_name|default:member.username|make_list|first|upper }}
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-900">{{ member.get_full_name|default:member.username }}</p>
+            <p class="text-xs text-gray-500">{{ member.email }}</p>
+          </div>
+          <span class="ml-auto rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">{{ member.get_role_display }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-sm text-gray-500">No other household members.</p>
+      {% endif %}
+    {% else %}
+      <p class="text-sm text-gray-500">You are not part of a household yet.</p>
+    {% endif %}
+  </div>
+
+  {# ── Notification Preferences ── #}
+  <div class="rounded-xl border bg-white p-6 shadow-sm">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Notification Preferences</h2>
+    <div class="space-y-4">
+      <label class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-900">Email notifications</p>
+          <p class="text-xs text-gray-500">Receive email updates about your accounts</p>
+        </div>
+        <button type="button"
+                class="relative inline-flex h-6 w-11 items-center rounded-full bg-emerald-600 transition"
+                onclick="this.classList.toggle('bg-emerald-600');this.classList.toggle('bg-gray-200');this.querySelector('span').classList.toggle('translate-x-6');this.querySelector('span').classList.toggle('translate-x-1')">
+          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition translate-x-6"></span>
+        </button>
+      </label>
+      <label class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-900">Weekly summary</p>
+          <p class="text-xs text-gray-500">Get a weekly digest of financial activity</p>
+        </div>
+        <button type="button"
+                class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition"
+                onclick="this.classList.toggle('bg-emerald-600');this.classList.toggle('bg-gray-200');this.querySelector('span').classList.toggle('translate-x-6');this.querySelector('span').classList.toggle('translate-x-1')">
+          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition translate-x-1"></span>
+        </button>
+      </label>
+      <label class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-900">Large transaction alerts</p>
+          <p class="text-xs text-gray-500">Get notified about transactions over $500</p>
+        </div>
+        <button type="button"
+                class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition"
+                onclick="this.classList.toggle('bg-emerald-600');this.classList.toggle('bg-gray-200');this.querySelector('span').classList.toggle('translate-x-6');this.querySelector('span').classList.toggle('translate-x-1')">
+          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition translate-x-1"></span>
+        </button>
+      </label>
+    </div>
+  </div>
+</div>
+{% endblock %}

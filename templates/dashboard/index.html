@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — ZHub{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  {# ── Summary cards ── #}
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {% for card in cards %}
+    <a href="{{ card.link }}"
+       class="group rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md hover:border-{{ card.color }}-300">
+      <div class="flex items-center justify-between">
+        <p class="text-sm font-medium text-gray-500">{{ card.title }}</p>
+        <div class="rounded-lg bg-{{ card.color }}-50 p-2 text-{{ card.color }}-600 group-hover:bg-{{ card.color }}-100">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="{{ card.icon }}"/>
+          </svg>
+        </div>
+      </div>
+      <p class="mt-3 text-2xl font-bold text-gray-900">{{ card.value }}</p>
+    </a>
+    {% endfor %}
+  </div>
+
+  {# ── Charts ── #}
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    {# Revenue Trend #}
+    <div class="rounded-xl border bg-white p-6 shadow-sm">
+      <h3 class="text-base font-semibold text-gray-900 mb-4">Revenue Trend</h3>
+      <div class="h-64">
+        <canvas id="revenueTrendChart"></canvas>
+      </div>
+    </div>
+
+    {# Income Breakdown #}
+    <div class="rounded-xl border bg-white p-6 shadow-sm">
+      <h3 class="text-base font-semibold text-gray-900 mb-4">Income Breakdown</h3>
+      <div class="h-64 flex items-center justify-center">
+        <canvas id="incomeBreakdownChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  {# ── Recent Activity ── #}
+  <div class="rounded-xl border bg-white p-6 shadow-sm">
+    <h3 class="text-base font-semibold text-gray-900 mb-4">Recent Activity</h3>
+    <div class="flex flex-col items-center justify-center py-12 text-gray-400">
+      <svg class="h-12 w-12 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <p class="text-sm">No recent activity</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Revenue Trend — line chart with sample data
+  const trendCtx = document.getElementById('revenueTrendChart').getContext('2d');
+  new Chart(trendCtx, {
+    type: 'line',
+    data: {
+      labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: [
+        {
+          label: 'Studio Revenue',
+          data: [18500, 19200, 21000, 20500, 22800, 24100],
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          fill: true,
+          tension: 0.3,
+        },
+        {
+          label: 'Rental Income',
+          data: [4200, 4200, 4200, 4500, 4500, 4500],
+          borderColor: '#8b5cf6',
+          backgroundColor: 'rgba(139, 92, 246, 0.1)',
+          fill: true,
+          tension: 0.3,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => '$' + v.toLocaleString() }
+        }
+      }
+    }
+  });
+
+  // Income Breakdown — donut chart with sample data
+  const donutCtx = document.getElementById('incomeBreakdownChart').getContext('2d');
+  new Chart(donutCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Z Lagree', 'Z Sculpt', 'Rental Income', 'W-2 Income'],
+      datasets: [{
+        data: [14000, 10100, 4500, 8500],
+        backgroundColor: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b'],
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' },
+      },
+      cutout: '65%',
+    }
+  });
+</script>
+{% endblock %}
