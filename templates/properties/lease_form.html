@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{% if lease %}Edit Lease{% else %}New Lease{% endif %} — ZHub{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-lg space-y-6">
+  <h1 class="text-2xl font-bold text-gray-900">{% if lease %}Edit Lease{% else %}New Lease{% endif %}</h1>
+  <p class="text-sm text-gray-500">{{ property.address }} — {{ unit.label }}</p>
+
+  <form method="post" class="rounded-xl border bg-white shadow-sm">
+    {% csrf_token %}
+
+    {% if form.errors %}
+    <div class="border-b border-red-200 bg-red-50 px-6 py-3 text-sm text-red-800">
+      {% if form.non_field_errors %}
+        {{ form.non_field_errors.0 }}
+      {% else %}
+        Please correct the errors below.
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="space-y-4 border-b px-6 py-5">
+      <h2 class="text-base font-semibold text-gray-900">Tenant Info</h2>
+      <div>
+        <label for="id_tenant_name" class="block text-sm font-medium text-gray-700 mb-1">Tenant Name</label>
+        {{ form.tenant_name }}
+        {% if form.tenant_name.errors %}<p class="mt-1 text-sm text-red-600">{{ form.tenant_name.errors.0 }}</p>{% endif %}
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="id_tenant_email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          {{ form.tenant_email }}
+        </div>
+        <div>
+          <label for="id_tenant_phone" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+          {{ form.tenant_phone }}
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-4 border-b px-6 py-5">
+      <h2 class="text-base font-semibold text-gray-900">Lease Terms</h2>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="id_start_date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+          {{ form.start_date }}
+          {% if form.start_date.errors %}<p class="mt-1 text-sm text-red-600">{{ form.start_date.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label for="id_end_date" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+          {{ form.end_date }}
+          {% if form.end_date.errors %}<p class="mt-1 text-sm text-red-600">{{ form.end_date.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="id_rent_amount" class="block text-sm font-medium text-gray-700 mb-1">Monthly Rent</label>
+          {{ form.rent_amount }}
+        </div>
+        <div>
+          <label for="id_security_deposit" class="block text-sm font-medium text-gray-700 mb-1">Security Deposit</label>
+          {{ form.security_deposit }}
+        </div>
+      </div>
+    </div>
+
+    <div class="border-b px-6 py-5">
+      <label for="id_notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+      {{ form.notes }}
+    </div>
+
+    <div class="flex items-center justify-end gap-3 px-6 py-4">
+      <a href="{% url 'properties:detail' pk=property.pk %}" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">Cancel</a>
+      <button type="submit" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">
+        {% if lease %}Save Changes{% else %}Create Lease{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

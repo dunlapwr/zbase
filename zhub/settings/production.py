@@ -1,6 +1,6 @@
 """
 Production settings for ZHub project.
-Deployed on DigitalOcean App Platform.
+Deployed on Heroku.
 """
 import os
 
@@ -10,7 +10,7 @@ from .base import *  # noqa: F401, F403
 
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-# Database — parsed from DATABASE_URL injected by DigitalOcean
+# Database — parsed from DATABASE_URL injected by Heroku Postgres
 DATABASES = {
     "default": dj_database_url.config(
         default="sqlite:///" + str(BASE_DIR / "db.sqlite3"),
@@ -26,20 +26,19 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
-# Security settings for running behind DO's load balancer
+# Security settings for running behind Heroku's load balancer
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-# DO App Platform handles SSL termination — no need for Django redirect
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# Trust the DO App Platform domain
+# Trust the Heroku app domain
 CSRF_TRUSTED_ORIGINS = [
     f"https://{host.strip()}"
     for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
     if host.strip()
 ]
 
-# Logging — surface errors in DO runtime logs
+# Logging — surface errors in Heroku logs
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
