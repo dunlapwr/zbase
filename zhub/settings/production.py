@@ -19,6 +19,13 @@ DATABASES = {
     )
 }
 
+# Override ALLOWED_HOSTS with whitespace stripping
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if host.strip()
+]
+
 # Security settings for running behind DO's load balancer
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # DO App Platform handles SSL termination — no need for Django redirect
@@ -27,7 +34,9 @@ CSRF_COOKIE_SECURE = True
 
 # Trust the DO App Platform domain
 CSRF_TRUSTED_ORIGINS = [
-    f"https://{host}" for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if host
+    f"https://{host.strip()}"
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
+    if host.strip()
 ]
 
 # Logging — surface errors in DO runtime logs
@@ -46,14 +55,24 @@ LOGGING = {
             "formatter": "verbose",
         },
     },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
     "loggers": {
         "django": {
             "handlers": ["console"],
-            "level": "WARNING",
+            "level": "INFO",
+            "propagate": False,
         },
         "django.request": {
             "handlers": ["console"],
-            "level": "ERROR",
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["console"],
+            "level": "INFO",
             "propagate": False,
         },
     },
