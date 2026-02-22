@@ -28,7 +28,7 @@ jobs:
       - name: Run migrations check
         env:
           DJANGO_SETTINGS_MODULE: zhub.settings.development
-        run: python manage.py migrate --check --dry-run
+        run: python manage.py migrate --check
 
       - name: Run tests
         env:

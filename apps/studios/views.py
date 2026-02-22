@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 from .models import Studio
 
@@ -16,8 +16,8 @@ def studio_list(request):
 
 @login_required
 def studio_detail(request, slug):
-    """Individual studio view — stub for Phase 2."""
-    studio = Studio.objects.get(slug=slug)
+    """Individual studio location page."""
+    studio = get_object_or_404(Studio, slug=slug)
     return render(request, "studios/detail.html", {
         "studio": studio,
         "breadcrumbs": [
