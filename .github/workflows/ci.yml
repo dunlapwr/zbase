@@ -25,10 +25,15 @@ jobs:
           DJANGO_SETTINGS_MODULE: zhub.settings.development
         run: python manage.py check
 
-      - name: Run migrations check
+      - name: Check for missing migrations
         env:
           DJANGO_SETTINGS_MODULE: zhub.settings.development
-        run: python manage.py migrate --check
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Run migrations
+        env:
+          DJANGO_SETTINGS_MODULE: zhub.settings.development
+        run: python manage.py migrate
 
       - name: Run tests
         env:
